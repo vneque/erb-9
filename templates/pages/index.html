@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block content %}
+ {% load humanize %}
+ {% block content %}
     <!-- Showcase -->
     <section id="showcase">
       <div class="container text-center">
@@ -14,6 +14,7 @@
             </p>
             <div class="search">
                 {% comment %} form action {% endcomment %}
+                <from acion={% url "listings:search"%}>
               <form action="search.html">
                 <!-- Form Row 1 -->
                 <div class="form-row">
@@ -35,7 +36,9 @@
                       <option selected="true" disabled="disabled">
                         District (All)
                       </option>
-                      <option value="IL">Islands</option>
+                      {% for key,value in district_choices.items %}
+                      <option value="{{key}}">{{value}}</option>
+                      {% endfor %}
                       <option value="KT">Kwai Tsing</option>
                       <option value="NR">North</option>
                       <option value="SK">Sai Kung</option>
@@ -56,12 +59,14 @@
                     </select>
                   </div>
                   <div class="col-md-4 mb-3">
-                    <label class="sr-only">Bedrooms</label>
-                    <select name="bedrooms" class="form-control">
+                    <label class="sr-only">Rooms</label>
+                    <select name="rooms" class="form-control">
                       <option selected="true" disabled="disabled">
-                        Night (All)
+                        Rooms (All)
                       </option>
-                      <option value="1">1</option>
+                      {% for key, value  in rooms_type_choices.items%}
+                      <option value="{{key}}">{{value}}</option>
+                      {% endfor %}
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
@@ -74,11 +79,13 @@
                     </select>
                   </div>
                   <div class="col-md-4 mb-3">
-                    <select name="price" class="form-control" id="type">
+                    <select name="room_type" class="form-control" id="type">
                       <option selected="true" disabled="disabled">
-                        Bedrooms (All)
+                        Room Type (All)
                       </option>
-                      <option value="1">Private Rooms</option>
+                      {% for key, value in room_choices.items %}
+                      <option value="{{key}}">{{value}}</option>
+                      {% endfor %}
                       <option value="2">Semi-Private Rooms</option>
                       <option value="3">Standard (Multi-bed) Rooms</option>
                     </select>
@@ -99,6 +106,8 @@
       <div class="container">
         <h3 class="text-center mb-3">Inpatient medical services</h3>
         <div class="row">
+          {% if listings %}
+          {% for listing in listings %}
           <!-- Listing 1 -->
           <div class="col-md-6 col-lg-4 mb-4">
             <div class="card listing-preview">
@@ -111,9 +120,9 @@
               </div>
               <div class="card-body">
                 <div class="listing-heading text-center">
-                  <h4 class="text-primary">Harmony Health Clinic</h4>
+                  <h4 class="text-primary">{{listing.title | title}}</h4>
                   <p>
-                    <i class="fas fa-map-marker text-secondary"></i> Kowloon Bay
+                    <i class="fas fa-map-marker text-secondary"></i> {{lisiing.distric| title }}
                   </p>
                 </div>
                 <hr />
@@ -135,11 +144,11 @@
                 </div>
                 <hr />
                 <div class="row py-2 text-secondary">
-                  <div class="col-12"><i class="fas fa-user"></i> Ms. Ma</div>
+                  <div class="col-12"><i class="fas fa-user"></i> {{listing.doctor.name}}</div>
                 </div>
                 <div class="row text-secondary pb-2">
                   <div class="col-12">
-                    <i class="fas fa-clock"></i> Reservation required
+                    <i class="fas fa-clock"></i> {{listing.list_date | timesince}}
                   </div>
                 </div>
                 <hr />
@@ -258,6 +267,13 @@
               </div>
             </div>
           </div>
+          {% endfor %}
+          {% else %}
+          < class="col-md-12">
+            <h2>No Clinic Available!</h2>
+          </div>
+
+          {% endif %}
         </div>
       </div>
     </section>
